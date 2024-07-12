@@ -1,0 +1,140 @@
+EDJUS:
+
+    Pls do below changes in PR_REWRITE_EXTRACTS workflow.
+    
+        1. Pls update STMT_OUTPUT_TO_NDM process with below.
+    
+            :IF &EXTRACT_RUN_MODE='ACCOUNT'
+            mv &NDM_OUTPUT/edjus_perf_sum_statement_account.txt &NDM_EXT_SEND
+            :ENDIF
+            :IF &EXTRACT_RUN_MODE='POSITION'
+            mv &NDM_OUTPUT/edjus_security_ror.txt &NDM_EXT_SEND
+            :  ENDIF
+            :IF &EXTRACT_RUN_MODE='ACCOUNT_BENCHMARK'
+            mv &NDM_OUTPUT/edjus_perf_sum_statement.txt &NDM_EXT_SEND
+            :ENDIF
+            :IF &EXTRACT_RUN_MODE='BENCHMARK'
+            mv &NDM_OUTPUT/edjus_perf_sum_statement_benchmark.txt &NDM_EXT_SEND
+            :ENDIF
+    
+             gzip &NDM_OUTPUT/*.txt
+    
+             if [ $? == 0 ]; then
+    
+                 mv &NDM_OUTPUT/*.gz &NDM_OUTPUT/archive/
+             fi
+            
+    Pls do below change in PR_REWRITE_EXTRACTS_BEN_MA workflow.
+    
+        1. Pls update PR_REWRITE_BEN_CP_MA_EXTRACT process with below.
+        
+            cp &MA_EXTRACT_DIR/&MA_EXTRACT_FILE &NDM_EXT_SEND
+    
+            gzip &MA_EXTRACT_DIR/&MA_EXTRACT_FILE
+    
+            if [ $? == 0 ]; then
+    
+                mv &MA_EXTRACT_DIR/*.gz &MA_EXTRACT_DIR/archive/
+            fi
+            
+    Pls do below change in PR_REWRITE_EXTRACTS_MA workflow.
+    
+        1. Pls update PR_REWRITE_CP_MA_EXTRACTS process with below.
+        
+            mv &MA_EXTRACT_DIR/&MA_EXTRACT_FILE &NDM_EXT_SEND
+    
+            gzip &MA_EXTRACT_DIR/&MA_EXTRACT_FILE
+    
+            if [ $? == 0 ]; then
+    
+                mv &MA_EXTRACT_DIR/*.gz &MA_EXTRACT_DIR/archive/
+            fi
+
+    Pls do changes in PR_REWRITE_EXTRACT_BUCKET process with below..
+
+        1. Pls update ARCHIVE_ACC_OUTPUT_FILE 
+            
+             cd &GREENPLUM_SCRIPT_PATH
+
+             gzip &ACC_INPUT_PATH/edjus_perf_sum_statement_account_*.csv
+
+             if [ $? == 0 ]; then
+                 mv &ACC_INPUT_PATH/edjus_perf_sum_statement_account_*.csv.gz &ACC_INPUT_PATH/archive/
+             fi
+
+             gzip &ACC_OUTPUT_PATH/edjus_perf_sum_statement_account*.avro
+
+             if [ $? == 0 ]; then
+                 mv &ACC_OUTPUT_PATH/edjus_perf_sum_statement_account*.avro.gz &ACC_OUTPUT_PATH/archive/
+             fi
+
+        2. Pls update ARCHIVE_POS_OUTPUT_FILE process with below.
+
+             cd &GREENPLUM_SCRIPT_PATH
+
+             gzip &POS_INPUT_PATH/edjus_security_ror_*.csv
+
+             if [ $? == 0 ]; then
+              mv &POS_INPUT_PATH/edjus_security_ror*.csv.gz &POS_INPUT_PATH/archive/
+             fi
+
+             gzip &POS_OUTPUT_PATH/edjus_security_ror*.avro
+
+             if [ $? == 0 ]; then
+              mv &POS_OUTPUT_PATH/edjus_security_ror*.avro.gz &POS_OUTPUT_PATH/archive/
+             fi
+            
+      3. Pls update ARCHIVE_BEN_OUTPUT_FILE process with below.
+
+             cd &GREENPLUM_SCRIPT_PATH
+
+             gzip &BEN_INPUT_PATH/edjus_perf_sum_statement_benchmark_*.csv
+
+             if [ $? == 0 ]; then
+              mv &BEN_INPUT_PATH/edjus_perf_sum_statement_benchmark*.csv.gz &BEN_INPUT_PATH/archive/
+             fi
+
+             gzip &BEN_OUTPUT_PATH/edjus_perf_sum_statement_benchmark*.avro
+
+             if [ $? == 0 ]; then
+              mv &BEN_OUTPUT_PATH/edjus_perf_sum_statement_benchmark.avro.gz &BEN_OUTPUT_PATH/archive/
+             fi
+
+SCMCA:
+    
+    Pls do below change in PR_REWRITE_EXTRACTS_SCMCA workflow.
+    
+        1. Pls copy zip changes from QA fro below jobs.
+        
+            PR_REWRITE_CP_SCMCA_MONTHLY_EXTRACTS 
+            PR_REWRITE_CP_SCMCA_DELTA_EXTRACTS
+        
+    
+EDJCA:
+    
+    Pls do below changed in PR_REWRITE_CRM_EXTRACTS workflow.
+    
+         1. Pls update PR_REWRITE_CP_CRM_EXTRACTS job with below command.
+    
+            mv &NDM_SEND/*edjca*crm* &NDM_SEND/archive/.
+    
+            cp &EXTRACT_DIR/&CRM_EXTRACT_FILE1 &NDM_SEND
+            cp &EXTRACT_DIR/&CRM_EXTRACT_FILE2 &NDM_SEND
+    
+            gzip &EXTRACT_DIR/*.txt
+    
+            if [ $? == 0 ]; then
+                mv &EXTRACT_DIR/*.gz &EXTRACT_DIR/archive/
+            fi
+    
+    Pls do below changed in PR_REWRITE_TWR_EXTRACTS_EDJCA_JP workflow.
+        
+        1. Pls update PR_REWRITE_CP_TWR_EXTRACTS job in workflow.
+    
+            cp &EXTRACT_DIR/&TWR_EXTRACT_FILE &NDM_SEND
+    
+            gzip &EXTRACT_DIR/*.txt
+    
+            if [ $? == 0 ]; then
+                mv &EXTRACT_DIR/*.gz &EXTRACT_DIR/archive/
+            fi
